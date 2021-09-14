@@ -15,6 +15,6 @@ after_success:
 notifications:
   email:
     recipients:
-      - vint-razor@tandex.ru
+      - vint-razor@yandex.ru
     on_success: never # default: change
     on_failure: always # default: always
