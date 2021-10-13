@@ -9,9 +9,6 @@ public class Fact {
         if (n < 0) {
             throw new IllegalArgumentException("The argument cannot be less than zero.");
         }
-        if (n < 2) {
-            return n;
-        }
         int rsl = 1;
         for (int index = 2; index <= n; index++) {
             rsl *= index;
