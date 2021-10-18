@@ -42,9 +42,9 @@ public class ValidateInputTest {
         out.println(input.askInt("Enter menu: "));
         String ln = System.lineSeparator();
         assertThat(out.toString(), is(
-                "1" + ln +
-                        "2" + ln +
-                        "3" + ln
+                "1" + ln
+                        + "2" + ln
+                        + "3" + ln
                 )
         );
     }
