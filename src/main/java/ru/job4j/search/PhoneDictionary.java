@@ -21,7 +21,7 @@ public class PhoneDictionary {
                     || person.getSurname().contains(key)
                     || person.getPhone().contains(key)
                     || person.getAddress().contains(key)) {
-                return persons;
+                result.add(person);
             }
         }
         return result;
