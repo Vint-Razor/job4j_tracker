@@ -11,13 +11,21 @@ public class FullSearch {
                 numbers.add(task.getNumber());
                 continue;
             }
-            for (String num : numbers) {
-                if (task.getNumber().equals(num)) {
-                    break;
-                }
+            if (!myContain(numbers, task)) {
                 numbers.add(task.getNumber());
             }
         }
         return numbers;
+    }
+
+    private static boolean myContain(HashSet<String> arr, Task task) {
+        boolean flag = false;
+        for (String num : arr) {
+            if (task.getNumber().equals(num)) {
+                flag = true;
+                break;
+            }
+        }
+        return flag;
     }
 }
