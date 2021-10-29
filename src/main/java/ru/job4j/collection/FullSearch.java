@@ -19,13 +19,11 @@ public class FullSearch {
     }
 
     private static boolean myContain(HashSet<String> arr, Task task) {
-        boolean flag = false;
         for (String num : arr) {
             if (task.getNumber().equals(num)) {
-                flag = true;
-                break;
+                return true;
             }
         }
-        return flag;
+        return false;
     }
 }
