@@ -7,23 +7,8 @@ public class FullSearch {
     public static HashSet<String> extractNumber(List<Task> list) {
         HashSet<String> numbers = new HashSet<>();
         for (Task task : list) {
-            if (numbers.isEmpty()) {
-                numbers.add(task.getNumber());
-                continue;
-            }
-            if (!myContain(numbers, task)) {
-                numbers.add(task.getNumber());
-            }
+            numbers.add(task.getNumber());
         }
         return numbers;
-    }
-
-    private static boolean myContain(HashSet<String> arr, Task task) {
-        for (String num : arr) {
-            if (task.getNumber().equals(num)) {
-                return true;
-            }
-        }
-        return false;
     }
 }
