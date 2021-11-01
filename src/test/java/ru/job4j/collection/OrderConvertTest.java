@@ -1,5 +1,6 @@
 package ru.job4j.collection;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -27,5 +28,16 @@ public class OrderConvertTest {
         order.add(new Order("0003", "third"));
         HashMap<String, Order> map = OrderConvert.process(order);
         assertThat(map.get("0002").getNumber(), is("0002"));
+    }
+
+    @Test
+    public void when4AddThen3Out() {
+        List<Order> order = new ArrayList<>();
+        order.add(new Order("0001", "first"));
+        order.add(new Order("0002", "second"));
+        order.add(new Order("0003", "third"));
+        order.add(new Order("0003", "four"));
+        HashMap<String, Order> map = OrderConvert.process(order);
+        Assert.assertNotEquals(is(map.size()), is(order.size()));
     }
 }
