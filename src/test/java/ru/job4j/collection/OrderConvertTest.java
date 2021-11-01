@@ -38,6 +38,6 @@ public class OrderConvertTest {
         order.add(new Order("0003", "third"));
         order.add(new Order("0003", "four"));
         HashMap<String, Order> map = OrderConvert.process(order);
-        Assert.assertNotEquals(is(map.size()), is(order.size()));
+        Assert.assertNotEquals(map.size(), order.size());
     }
 }
