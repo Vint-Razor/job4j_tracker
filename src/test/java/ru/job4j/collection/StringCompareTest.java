@@ -10,9 +10,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class StringCompareTest {
 
     @Test
-    public void whenStringsAreEqualThenZero () {
-        StringCompare compare = new StringCompare();
-        int rst = compare.compare (
+    public void whenStringsAreEqualThenZero() {
+        StringCompare strComp = new StringCompare();
+        int rst = strComp.compare(
                 "Ivanov",
                 "Ivanov"
         );
@@ -20,9 +20,9 @@ public class StringCompareTest {
     }
 
     @Test
-    public void whenLeftLessThanRightResultShouldBeNegative () {
-        StringCompare compare = new StringCompare();
-        int rst = compare.compare (
+    public void whenLeftLessThanRightResultShouldBeNegative() {
+        StringCompare strComp = new StringCompare();
+        int rst = strComp.compare(
                 "Ivanov",
                 "Ivanova"
         );
@@ -30,9 +30,9 @@ public class StringCompareTest {
     }
 
     @Test
-    public void whenLeftGreaterThanRightResultShouldBePositive () {
-        StringCompare compare = new StringCompare();
-        int rst = compare.compare (
+    public void whenLeftGreaterThanRightResultShouldBePositive() {
+        StringCompare strComp = new StringCompare();
+        int rst = strComp.compare(
                 "Petrov",
                 "Ivanova"
         );
@@ -41,8 +41,8 @@ public class StringCompareTest {
 
     @Test
     public void secondCharOfLeftGreaterThanRightShouldBePositive() {
-        StringCompare compare = new StringCompare();
-        int rst = compare.compare (
+        StringCompare strComp = new StringCompare();
+        int rst = strComp.compare(
                 "Petrov",
                 "Patrov"
         );
@@ -51,8 +51,8 @@ public class StringCompareTest {
 
     @Test
     public void secondCharOfLeftLessThanRightShouldBeNegative() {
-        StringCompare compare = new StringCompare();
-        int rst = compare.compare (
+        StringCompare strComp = new StringCompare();
+        int rst = strComp.compare(
                 "Patrova",
                 "Petrov"
         );
