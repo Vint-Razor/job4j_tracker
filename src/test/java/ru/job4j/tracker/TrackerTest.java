@@ -96,28 +96,4 @@ public class TrackerTest {
         tracker.delete(id);
         assertThat(tracker.findById(id), is(nullValue()));
     }
-
-    @Test
-    public void whenSortRevName() {
-        List<Item> items = Arrays.asList(
-                new Item("first"),
-                new Item("second"),
-                new Item("third"),
-                new Item("four")
-        );
-        Collections.sort(items, new SortNameRevItem());
-        assertThat(items.get(0).getName(), is("third"));
-    }
-
-    @Test
-    public void whenSortName() {
-        List<Item> items = Arrays.asList(
-                new Item("b"),
-                new Item("c"),
-                new Item("a"),
-                new Item("d")
-        );
-        Collections.sort(items, new SortNameItem());
-        assertThat(items.get(0).getName(), is("a"));
-    }
 }
