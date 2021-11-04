@@ -6,30 +6,12 @@ public class StringCompare implements Comparator<String> {
 
     @Override
     public int compare(String left, String right) {
-        int size = left.length() < right.length() ? left.length() : right.length();
-        int rsl = 0;
-        int count = 0;
+        int size = Math.min(left.length(), right.length());
         for (int i = 0; i < size; i++) {
-            if (left.charAt(i) > right.charAt(i)) {
-                return 1;
-            } else if (left.charAt(i) < right.charAt(i)) {
-                return -1;
+            if (left.charAt(i) != right.charAt(i)) {
+                return Character.compare(left.charAt(i), right.charAt(i));
             }
-            count++;
         }
-        if (left.length() > count) {
-            return 1;
-        } else if (right.length() > count) {
-            return -1;
-        }
-        return rsl;
-    }
-
-    public static void main(String[] args) {
-        StringCompare srtCom = new StringCompare();
-        String one = "ivan";
-        String two = "ivanov";
-        int rsl = srtCom.compare(one, two);
-        System.out.println(rsl);
+        return Integer.compare(left.length(), right.length());
     }
 }
