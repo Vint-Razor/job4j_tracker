@@ -2,8 +2,7 @@ package ru.job4j.stream;
 
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -64,5 +63,20 @@ public class SchoolTest {
         expected.add(new Student(30, "Surname3"));
         expected.add(new Student(40, "Surname4"));
         assertThat(rsl, is(expected));
+    }
+
+    @Test
+    public void collToMap() {
+        School school = new School();
+        Student ivanov = new Student(20, "Ivanov");
+        Student petrov = new Student(30, "Petrov");
+        Student seedorov = new Student(40, "Seedorov");
+        List<Student> list = Arrays.asList(ivanov, petrov, seedorov, ivanov);
+        Map<String, Student> expected = school.collToMap(list);
+        Map<String, Student> actual = new HashMap<>();
+        actual.put("Ivanov", ivanov);
+        actual.put("Petrov", petrov);
+        actual.put("Seedorov", seedorov);
+        assertThat(expected, is(actual));
     }
 }
