@@ -14,10 +14,11 @@ public class School {
 
     public Map<String, Student> collToMap(List<Student> list) {
         return list.stream()
-                .distinct()
                 .collect(Collectors.toMap(
                         Student::getSurname,
-                        st -> st)
+                        st -> st,
+                        (st1, st2) -> st1
+                        )
                 );
     }
 }
