@@ -103,10 +103,7 @@ public class AnalyzeByMap {
 
     private static void sumSubjScore(Pupil pupil, Map<String, Integer> map) {
         for (Subject subject : pupil.subjects()) {
-            Integer score = map.putIfAbsent(subject.name(), subject.score());
-            if (score != null) {
-                map.put(subject.name(), subject.score() + score);
-            }
+            map.merge(subject.name(), subject.score(), Integer::sum);
         }
     }
 }
