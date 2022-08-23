@@ -1,8 +1,8 @@
 package ru.job4j.tracker;
 
 import java.io.InputStream;
-import java.sql.Connection;
-import java.sql.DriverManager;
+import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Properties;
 
@@ -35,7 +35,19 @@ public class SqlTracker implements Store, AutoCloseable {
 
     @Override
     public Item add(Item item) {
-        return null;
+        try (PreparedStatement statement = cn.prepareStatement(
+                "INSERT INTO items (name, created) VALUES (?, ?);")) {
+            statement.setString(1, item.getName());
+            statement.setTimestamp(2, Timestamp.valueOf(item.getCreated()));
+            try (ResultSet generatedKey = statement.getGeneratedKeys()) {
+                if (generatedKey.next()) {
+                    item.setId(generatedKey.getInt(1));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return item;
     }
 
     @Override
@@ -61,5 +73,19 @@ public class SqlTracker implements Store, AutoCloseable {
     @Override
     public Item findById(int id) {
         return null;
+    }
+
+    private void edit(String sql) {
+        try (Statement statement = cn.createStatement()) {
+            statement.execute(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private LocalDateTime timeConverter(Timestamp time) {
+        long millis = System.currentTimeMillis();
+        Timestamp timestamp = new Timestamp(millis);
+        return timestamp.toLocalDateTime();
     }
 }
