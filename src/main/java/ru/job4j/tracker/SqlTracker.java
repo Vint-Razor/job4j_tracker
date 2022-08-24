@@ -2,8 +2,8 @@ package ru.job4j.tracker;
 
 import java.io.InputStream;
 import java.sql.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
 
@@ -37,9 +37,11 @@ public class SqlTracker implements Store, AutoCloseable {
     @Override
     public Item add(Item item) {
         try (PreparedStatement statement = cn.prepareStatement(
-                "INSERT INTO items (name, created) VALUES (?, ?);")) {
+                "insert into items (name, created) values (?, ?);",
+                Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, item.getName());
             statement.setTimestamp(2, Timestamp.valueOf(item.getCreated()));
+            statement.executeUpdate();
             try (ResultSet generatedKey = statement.getGeneratedKeys()) {
                 if (generatedKey.next()) {
                     item.setId(generatedKey.getInt(1));
@@ -55,10 +57,9 @@ public class SqlTracker implements Store, AutoCloseable {
     public boolean replace(int id, Item item) {
         boolean rsl = false;
         try (PreparedStatement statement = cn.prepareStatement(
-                "UPDATE items SET name = ?, created = ? WHERE id = ?;")) {
+                "UPDATE items SET name = ? WHERE id = ?;")) {
             statement.setString(1, item.getName());
-            statement.setTimestamp(2, Timestamp.valueOf(item.getCreated()));
-            statement.setInt(3, id);
+            statement.setInt(2, id);
             rsl = statement.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -111,37 +112,34 @@ public class SqlTracker implements Store, AutoCloseable {
                 "SELECT * FROM items WHERE id = ?;")) {
             statement.setInt(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
-                item = new Item(
-                        resultSet.getInt("id"),
-                        resultSet.getString("name"),
-                        timeConverter(resultSet.getTimestamp("created"))
-                );
+                if (resultSet.next()) {
+                    item = new Item(
+                            resultSet.getInt("id"),
+                            resultSet.getString("name"),
+                            resultSet.getTimestamp("created").toLocalDateTime()
+                    );
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return item;
+        return item.getName() != null ? item : null;
     }
 
     private List<Item> saveToList(PreparedStatement statement) {
         List<Item> list = new ArrayList<>();
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    list.add(new Item(
-                            resultSet.getInt("id"),
-                            resultSet.getString("name"),
-                            timeConverter(resultSet.getTimestamp("created"))
-                    ));
-                }
+        try (ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+                list.add(new Item(
+                        resultSet.getInt("id"),
+                        resultSet.getString("name"),
+                        resultSet.getTimestamp("created").toLocalDateTime()
+                ));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        list.sort(Comparator.comparing(Item::getId));
         return list;
-    }
-
-    private static LocalDateTime timeConverter(Timestamp time) {
-        long millis = System.currentTimeMillis();
-        Timestamp timestamp = new Timestamp(millis);
-        return timestamp.toLocalDateTime();
     }
 }
