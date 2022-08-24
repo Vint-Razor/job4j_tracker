@@ -3,7 +3,6 @@ package ru.job4j.tracker;
 import java.io.InputStream;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
 
@@ -57,9 +56,10 @@ public class SqlTracker implements Store, AutoCloseable {
     public boolean replace(int id, Item item) {
         boolean rsl = false;
         try (PreparedStatement statement = cn.prepareStatement(
-                "UPDATE items SET name = ? WHERE id = ?;")) {
+                "UPDATE items SET name = ?, created = ? WHERE id = ?;")) {
             statement.setString(1, item.getName());
-            statement.setInt(2, id);
+            statement.setTimestamp(2, Timestamp.valueOf(item.getCreated()));
+            statement.setInt(3, id);
             rsl = statement.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -84,8 +84,12 @@ public class SqlTracker implements Store, AutoCloseable {
     public List<Item> findAll() {
         List<Item> list = new ArrayList<>();
         try (PreparedStatement statement = cn.prepareStatement(
-                "SELECT * FROM items;")) {
-            list = saveToList(statement);
+                "SELECT * FROM items ORDER BY id;")) {
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    list.add(getItem(resultSet));
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -96,9 +100,13 @@ public class SqlTracker implements Store, AutoCloseable {
     public List<Item> findByName(String key) {
         List<Item> list = new ArrayList<>();
         try (PreparedStatement statement = cn.prepareStatement(
-                "SELECT * FROM items WHERE name = ?;")) {
+                "SELECT * FROM items WHERE name = ? ORDER BY id;")) {
             statement.setString(1, key);
-            list = saveToList(statement);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    list.add(getItem(resultSet));
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -107,39 +115,26 @@ public class SqlTracker implements Store, AutoCloseable {
 
     @Override
     public Item findById(int id) {
-        Item item = new Item();
+        Item item = null;
         try (PreparedStatement statement = cn.prepareStatement(
-                "SELECT * FROM items WHERE id = ?;")) {
+                "SELECT * FROM items WHERE id = ? ORDER BY id;")) {
             statement.setInt(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    item = new Item(
-                            resultSet.getInt("id"),
-                            resultSet.getString("name"),
-                            resultSet.getTimestamp("created").toLocalDateTime()
-                    );
+                    item = getItem(resultSet);
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return item.getName() != null ? item : null;
+        return item;
     }
 
-    private List<Item> saveToList(PreparedStatement statement) {
-        List<Item> list = new ArrayList<>();
-        try (ResultSet resultSet = statement.executeQuery()) {
-            while (resultSet.next()) {
-                list.add(new Item(
-                        resultSet.getInt("id"),
-                        resultSet.getString("name"),
-                        resultSet.getTimestamp("created").toLocalDateTime()
-                ));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        list.sort(Comparator.comparing(Item::getId));
-        return list;
+    private Item getItem(ResultSet resultSet) throws SQLException {
+        return new Item(
+                resultSet.getInt("id"),
+                resultSet.getString("name"),
+                resultSet.getTimestamp("created").toLocalDateTime()
+        );
     }
 }
