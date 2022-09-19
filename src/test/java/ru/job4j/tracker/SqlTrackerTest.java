@@ -51,26 +51,32 @@ public class SqlTrackerTest {
     @Test
     public void whenSaveItemFindByGeneratedThenMustBeTheSame() {
         SqlTracker tracker = new SqlTracker(connection);
-        Item item = new Item("item");
-        tracker.add(item);
+        Item item = tracker.add(new Item("item"));
         assertThat(tracker.findById(item.getId()), is(item));
     }
 
     @Test
     public void whenReplaceItemThenNameReplaced() {
         final SqlTracker sqlTracker = new SqlTracker(connection);
-        final Item item = new Item("Item");
+        final Item item = sqlTracker.add(new Item("Item"));
         final Item newItem = new Item("New Item");
-        sqlTracker.add(item);
         sqlTracker.replace(item.getId(), newItem);
-        assertThat(sqlTracker.findById(item.getId()).getName(), is(newItem.getName()));
+        newItem.setId(item.getId());
+        assertThat(sqlTracker.findById(item.getId()), is(newItem));
+    }
+
+    @Test
+    public void whenReplacedThenTrue() {
+        final SqlTracker sqlTracker = new SqlTracker(connection);
+        final Item item = sqlTracker.add(new Item("Item"));
+        final Item newItem = new Item("New Item");
+        Assert.assertTrue(sqlTracker.replace(item.getId(), newItem));
     }
 
     @Test
     public void whenDeletedItemThenIdIsNull() {
         final SqlTracker sqlTracker = new SqlTracker(connection);
-        final Item one = new Item("one");
-        sqlTracker.add(one);
+        final Item one = sqlTracker.add(new Item("one"));
         sqlTracker.deleted(one.getId());
         assertThat(sqlTracker.findById(one.getId()), is(nullValue()));
     }
@@ -78,18 +84,15 @@ public class SqlTrackerTest {
     @Test
     public void whenDeletedItemThenTrue() {
         final SqlTracker sqlTracker = new SqlTracker(connection);
-        final Item one = new Item("one");
-        sqlTracker.add(one);
+        final Item one = sqlTracker.add(new Item("one"));
         Assert.assertTrue(sqlTracker.deleted(one.getId()));
     }
 
     @Test
     public void checkFindAll() {
         final SqlTracker sqlTracker = new SqlTracker(connection);
-        final Item one = new Item("one");
-        final Item two = new Item("two");
-        sqlTracker.add(one);
-        sqlTracker.add(two);
+        final Item one = sqlTracker.add(new Item("one"));
+        final Item two = sqlTracker.add(new Item("two"));
         final List<Item> expected = List.of(one, two);
         assertThat(sqlTracker.findAll(), is(expected));
     }
@@ -97,12 +100,9 @@ public class SqlTrackerTest {
     @Test
     public void checkFindByName() {
         final SqlTracker sqlTracker = new SqlTracker(connection);
-        final Item jackCh = new Item("Jack");
-        final Item jackN = new Item("Jack");
-        final Item bill = new Item("Bill");
-        sqlTracker.add(jackCh);
-        sqlTracker.add(jackN);
-        sqlTracker.add(bill);
+        final Item jackCh = sqlTracker.add(new Item("Jack"));
+        final Item jackN = sqlTracker.add(new Item("Jack"));
+        sqlTracker.add(new Item("Bill"));
         final List<Item> expected = List.of(jackCh, jackN);
         assertThat(sqlTracker.findByName("Jack"), is(expected));
     }
@@ -116,10 +116,8 @@ public class SqlTrackerTest {
     @Test
     public void checkFindById() {
         final SqlTracker sqlTracker = new SqlTracker(connection);
-        final Item one = new Item("one");
-        final Item two = new Item("two");
-        sqlTracker.add(one);
-        sqlTracker.add(two);
+        sqlTracker.add(new Item("one"));
+        final Item two = sqlTracker.add(new Item("two"));
         assertThat(sqlTracker.findById(two.getId()), is(two));
     }
 
