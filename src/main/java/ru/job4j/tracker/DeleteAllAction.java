@@ -14,16 +14,14 @@ public class DeleteAllAction implements UserAction {
 
     @Override
     public boolean execute(Input input, Store tracker) {
-        for (int i = 0; i < 1_000_000; i++) {
-            out.println("=== Delete item ====");
-            int id = i;
-            if (tracker.deleted(id)) {
-                out.println("Заявка удалена успешно.");
+        for (var item : tracker.findAll()) {
+            int numOfItem = item.getId();
+            if (tracker.deleted(numOfItem)) {
+                out.println("Заявка удалена успешно. " + numOfItem);
             } else {
                 out.println("Ошибка удаления заявки.");
             }
         }
-
         return true;
     }
 }

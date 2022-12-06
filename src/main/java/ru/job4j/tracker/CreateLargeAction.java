@@ -9,12 +9,13 @@ public class CreateLargeAction implements UserAction {
 
     @Override
     public String name() {
-        return "Create many Item";
+        return "Create many Items";
     }
 
     @Override
     public boolean execute(Input input, Store tracker) {
-        for (int i = 0; i < 1_000_000; i++) {
+        int numOfItems = input.askInt("Enter the number of items: ");
+        for (int i = 1; i <= numOfItems; i++) {
             out.println("=== Create new item ====");
             String name = ("Item " + i);
             Item item = new Item(name);
