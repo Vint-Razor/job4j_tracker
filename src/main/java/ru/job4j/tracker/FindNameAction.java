@@ -3,7 +3,7 @@ package ru.job4j.tracker;
 import java.util.List;
 
 public class FindNameAction implements UserAction {
-    private Output out;
+    private final Output out;
 
     public FindNameAction(Output out) {
         this.out = out;
